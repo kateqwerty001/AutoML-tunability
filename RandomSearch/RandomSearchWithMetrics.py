@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import cross_val_predict, KFold
 from sklearn.metrics import f1_score, accuracy_score, roc_auc_score, brier_score_loss
-from scipy.stats import kendalltau, uniform
+from scipy.stats import uniform
 import random
 
 class RandomSearchWithMetrics:
@@ -40,15 +40,13 @@ class RandomSearchWithMetrics:
             accuracy = accuracy_score(self.y, y_pred)
             brier_score = brier_score_loss(self.y, y_probabilities)
             roc_auc = roc_auc_score(self.y, y_probabilities)
-            kendall_tau = kendalltau(self.y, y_pred).correlation
 
             # dictionary with metrics
             metrics = {
                 'f1': f1,
                 'accuracy': accuracy,
                 'brier_score': brier_score,
-                'roc_auc': roc_auc,
-                'kendall_tau': kendall_tau
+                'roc_auc': roc_auc
             }
 
             # update history
