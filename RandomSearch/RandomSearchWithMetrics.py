@@ -6,7 +6,7 @@ from scipy.stats import uniform
 import random
 
 class RandomSearchWithMetrics:
-    def __init__(self, pipeline, param_dist, X, y, n_iter=10, cv=5):
+    def __init__(self, pipeline, param_dist, X, y, n_iter=10, cv=5, path="", random_state=42):
         self.pipeline = pipeline
         self.param_dist = param_dist
         self.X = X
@@ -14,6 +14,8 @@ class RandomSearchWithMetrics:
         self.n_iter = n_iter
         self.cv = cv
         self.history = []
+        self.path = path
+        self.random_state = random_state
 
     def generate_random_params(self):
         params = {}
@@ -22,17 +24,20 @@ class RandomSearchWithMetrics:
                 params[key] = random.choice(values)
             elif hasattr(values, 'rvs'):
                 params[key] = values.rvs()
-        print(params)
         return params
 
     def fit_and_evaluate(self):
+        # Устанавливаем сид для воспроизводимости
+        random.seed(self.random_state)
+        np.random.seed(self.random_state)
+
         for i in range(self.n_iter):
             # random generation of parameters
             params = self.generate_random_params()
             self.pipeline.set_params(**params)
 
             # cross-validation
-            kf = KFold(n_splits=self.cv, shuffle=True, random_state=42)
+            kf = KFold(n_splits=self.cv, shuffle=True, random_state=self.random_state)
             y_pred = cross_val_predict(self.pipeline, self.X, self.y, cv=kf, method='predict')
             y_probabilities = cross_val_predict(self.pipeline, self.X, self.y, cv=kf, method='predict_proba')[:, 1]
 
@@ -53,6 +58,8 @@ class RandomSearchWithMetrics:
             # update history
             metrics.update(params)
             self.history.append(metrics)
+
+            self.save_results(path_to_save=self.path)
 
     def save_results(self, path_to_save=""):
         df_history = pd.DataFrame(self.history)
