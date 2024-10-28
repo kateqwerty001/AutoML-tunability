@@ -22,6 +22,7 @@ class RandomSearchWithMetrics:
                 params[key] = random.choice(values)
             elif hasattr(values, 'rvs'):
                 params[key] = values.rvs()
+        print(params)
         return params
 
     def fit_and_evaluate(self):
