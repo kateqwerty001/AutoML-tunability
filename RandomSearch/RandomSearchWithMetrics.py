@@ -27,7 +27,7 @@ class RandomSearchWithMetrics:
         return params
 
     def fit_and_evaluate(self):
-        # Устанавливаем сид для воспроизводимости
+        
         random.seed(self.random_state)
         np.random.seed(self.random_state)
 
