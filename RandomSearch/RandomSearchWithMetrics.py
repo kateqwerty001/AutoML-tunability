@@ -22,8 +22,6 @@ class RandomSearchWithMetrics:
         for key, values in self.param_dist.items():
             if isinstance(values, list):
                 params[key] = random.choice(values)
-            elif hasattr(values, 'rvs'):
-                params[key] = values.rvs()
         return params
 
     def fit_and_evaluate(self):
